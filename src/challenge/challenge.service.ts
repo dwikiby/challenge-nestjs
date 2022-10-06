@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { CreateTestDTO } from './dto/create-test.dto';
 import { genderStatus, Test } from './challenge.model';
@@ -54,7 +54,11 @@ export class ChallengeService {
     }
 
     getTestById(id: string): Test { // get data by id
-        return this.tests.find((tests) => tests.id === id);
+        const found = this.tests.find((test) => test.id === id);
+        if (!found) {
+            throw new NotFoundException('Task not found');
+        }
+        return found;
     }
 
     updateTestStatus(id: string, full_name: string, motto: string, cv: string, gender: genderStatus) {
@@ -67,6 +71,7 @@ export class ChallengeService {
     }
 
     deleteTest(id: string): void {
-        this.tests = this.tests.filter((test) => test.id !== id)
+        const found = this.getTestById(id);
+        this.tests = this.tests.filter((test) => test.id !== found.id)
     }
 }

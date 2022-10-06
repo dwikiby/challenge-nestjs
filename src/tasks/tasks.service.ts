@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { TaskStatus, Task } from './tasks.model';
 import { v4 as uuid } from 'uuid';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { take } from 'rxjs';
-import { GetTaskStatusFilterDto } from './dto/get-task.filter';
+import { GetTaskStatusFilterDto } from './dto/get-tasks-filter.dto';
 
 @Injectable()
 export class TasksService {
@@ -67,15 +67,24 @@ export class TasksService {
         return task;
     }
     getTaskById(id: string): Task {  //get task by id
-        return this.tasks.find((tasks) => tasks.id === id);
+        // return this.tasks.find((tasks) => tasks.id === id);
+        const found = this.tasks.find((task) => task.id === id); // untuk mencari id data
+        if (!found) { // apabila tidak ditemukan, tampilkan error
+            throw new NotFoundException('Task not found');
+        }
+        return found; // id cocok, tampilkan data
     }
 
     deleteTask(id: string): void { // delete data
-        this.tasks = this.tasks.filter((task) => task.id !== id)
+        // this.tasks = this.tasks.filter((task) => task.id !== id)
+        const found = this.getTaskById(id);
+        this.tasks = this.tasks.filter((task) => task.id !== found.id);
     }
 
-    updateTaskStatus(id: string, status: TaskStatus) {
+    updateTaskStatus(id: string, title: string, description: string, status: TaskStatus) {
         const task = this.getTaskById(id);
+        task.title = title;
+        task.description = description;
         task.status = status;
         return task;
     }

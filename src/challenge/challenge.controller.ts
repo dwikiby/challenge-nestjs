@@ -3,6 +3,7 @@ import { ChallengeService } from './challenge.service';
 import { genderStatus, Test } from './challenge.model';
 import { CreateTestDTO } from './dto/create-test.dto';
 import { GetTestStatusFilterDto } from './dto/get-test.filter';
+import { UpdateTestStatusDto } from './dto/update-test-filter.dto';
 @Controller('challenge')
 export class ChallengeController {
     constructor(private challengeService: ChallengeService) { }
@@ -44,9 +45,11 @@ export class ChallengeController {
         @Body('full_name') full_name: string,
         @Body('motto') motto: string,
         @Body('cv') cv: string,
-        @Body('gender') gender: genderStatus,
+        // @Body('gender') gender: genderStatus,
+        @Body() updateTestStatusDto: UpdateTestStatusDto,
 
     ): Test {
+        const { gender } = updateTestStatusDto;
         return this.challengeService.updateTestStatus(id, full_name, motto, cv, gender);
     }
 }
