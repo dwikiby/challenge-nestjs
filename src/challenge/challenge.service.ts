@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { CreateTestDTO } from './dto/create-test.dto';
 import { genderStatus, Test } from './challenge.model';
+import { GetTestStatusFilterDto } from './dto/get-test.filter';
 
 @Injectable()
 export class ChallengeService {
@@ -9,6 +10,31 @@ export class ChallengeService {
 
     getAllTask() {
         return this.tests;
+    }
+
+    getTestWithFilter(filterDto: GetTestStatusFilterDto): Test[] {
+        const { gender, search } = filterDto;
+
+        let tests = this.getAllTask();
+
+        //seleksi gender
+        if (gender) {
+            tests = tests.filter((test) => test.gender === gender);
+        }
+
+        //seleksi full_name
+        if (search) {
+            tests = tests.filter((test) => {
+                if (test.full_name.includes(search) || test.motto.includes(search)) {
+                    return true;
+
+                }
+                return false;
+
+            });
+
+        }
+        return tests
     }
 
     createTest(createTestDTO: CreateTestDTO): Test { // createTaskDTO = variabel, CreateTaskDTO = objek
@@ -25,5 +51,22 @@ export class ChallengeService {
         };
         this.tests.push(test);
         return test;
+    }
+
+    getTestById(id: string): Test { // get data by id
+        return this.tests.find((tests) => tests.id === id);
+    }
+
+    updateTestStatus(id: string, full_name: string, motto: string, cv: string, gender: genderStatus) {
+        const test = this.getTestById(id);
+        test.full_name = full_name;
+        test.motto = motto;
+        test.cv = cv;
+        test.gender = gender;
+        return test;
+    }
+
+    deleteTest(id: string): void {
+        this.tests = this.tests.filter((test) => test.id !== id)
     }
 }

@@ -3,13 +3,40 @@ import { TaskStatus, Task } from './tasks.model';
 import { v4 as uuid } from 'uuid';
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { take } from 'rxjs';
+import { GetTaskStatusFilterDto } from './dto/get-task.filter';
 
 @Injectable()
 export class TasksService {
     private tasks: Task[] = []; // bikin variabel tasks yang memanggil objek Task
 
-    getAllTask() {
+    // getAllTask() {
+    //     return this.tasks;
+    // }
+
+    getAllTask(): Task[] {
         return this.tasks;
+    }
+    getTaskWithFilter(filterDto: GetTaskStatusFilterDto): Task[] {
+        const { status, search } = filterDto;
+        //deklarasi sebuah array untuk menampung nilai temporary.
+        let tasks = this.getAllTask();
+
+        if (status) {
+            tasks = tasks.filter((task) => task.status === status);
+        }
+
+        //seleksi untuk search
+        if (search) {
+            tasks = tasks.filter((task) => {
+
+                if (task.title.includes(search) || task.description.includes(search)) {
+                    return true;
+                }
+
+                return false;
+            });
+        }
+        return tasks;
     }
 
     /*
