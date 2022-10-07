@@ -1,7 +1,7 @@
 import { IsNotEmpty } from "class-validator"
 
 export class CreateTestDTO {
-    @IsNotEmpty()
+    @IsNotEmpty() //field harus sesuai dengan enum
     full_name: string;
 
     @IsNotEmpty()
