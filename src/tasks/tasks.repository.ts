@@ -71,7 +71,7 @@ export class TaskRepository extends Repository<Task> {
         const task = await this.delete(id);
         return {
             status: 200,
-            message: 'OK'
+            message: `data id ${id} telah dihapus`
         }
 
     }
