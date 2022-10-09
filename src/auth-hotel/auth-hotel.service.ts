@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtPayLoad } from './jwt-payload.interface';
 import { JwtService } from '@nestjs/jwt'
 import { GuestRepository } from './guest.repository';
+import { LoginAuthCredentialsDto } from './dto/login-auth.credentials.dto';
 @Injectable()
 export class AuthHotelService {
     constructor(
@@ -20,9 +21,9 @@ export class AuthHotelService {
 
     //login
     async signIn(
-        authHotelCredentialDto: AuthHotelCredentialsDto,
+        loginCredentialDto: LoginAuthCredentialsDto
     ): Promise<{ accessToken: string }> {
-        const { email, password } = authHotelCredentialDto;
+        const { email, password } = loginCredentialDto;
         const guest = await this.guestRepository.findOne({
             where: {
                 email: email
